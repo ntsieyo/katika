@@ -1,10 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-
-from django.contrib import admin
 from django import forms
 from django.contrib.gis.db import models as geo_models
-from django.contrib.gis import forms as geo_forms
 
 from rest_framework import serializers
 from mapwidgets.widgets import GooglePointFieldWidget, GoogleStaticOverlayMapWidget
@@ -34,6 +31,8 @@ class IncidentType(models.Model):
     # parent_category = models.ForeignKey('self', null=True, blank=True)
 
     # gravity, meta-data?
+    
+    ADMIN_FIELDS = ['name', 'order_key']
 
     def __str__(self):
         return self.name
@@ -42,14 +41,6 @@ class IncidentType(models.Model):
         verbose_name_plural = 'Incident Types'
         ordering = ['-order_key']
 
-
-class IncidentTypeAdmin(admin.ModelAdmin):
-
-    # fields = ['name', 'age', 'residence']
-    fields = ['name', 'order_key']
-
-
-admin.site.register(IncidentType, IncidentTypeAdmin)
 
 
 class Tag(models.Model):
@@ -75,8 +66,6 @@ class Tag(models.Model):
         unique_together = ('name', 'name_fr')
 
 
-admin.site.register(Tag)
-
 
 class KeySource(models.Model):
     name = models.CharField(max_length=30)
@@ -87,8 +76,6 @@ class KeySource(models.Model):
 
         return self.name
 
-
-admin.site.register(KeySource)
 
 
 class Incident(models.Model):
@@ -132,6 +119,13 @@ class Incident(models.Model):
     location_inaccurate = models.BooleanField(null=True, blank=True)
 
     notes = models.TextField(null=True, blank=True)
+    
+    # Admin Related conf
+    ADMIN_LIST_DISPLAY = ('date', 'last_modified', 'registration_date','type', 'reported_by', 'deaths',
+                    'wounded', 'missing', 'address')
+    ADMIN_SEARCH_FIELDS = ('description',)
+    ADMIN_LIST_FILTER = ('type', 'date')
+    ADMIN_EXCLUDE = ['address']
 
     def __str__(self):
         return "{}: {}, {}".format(self.type, self.date, self.address)
@@ -300,26 +294,7 @@ def save_tag_ids(sender, **kwargs):
 
 
 
-class IncidentAdmin(admin.ModelAdmin):
 
-    # fields = ['name', 'age', 'residence']
-    #fieldset = {'address', fields = ['type', 'location', 'date', 'description', 'source', 'deaths', 'wounded']
-    exclude = ['address']
-    formfield_overrides = {
-        geo_models.PointField: {"widget": GooglePointFieldWidget},
-        #KeywordsField: {"widget": KeywordsWidget},
-
-    }
-
-    list_display = ('date', 'last_modified', 'registration_date','type', 'reported_by', 'deaths',
-                    'wounded', 'missing', 'address')
-    search_fields = ('description',)
-    list_filter = ('type', 'date')
-    #filter_horizontal = ('supervisors', 'committee')
-    #raw_id_fields = ('author',)
-
-
-admin.site.register(Incident, IncidentAdmin)
 
 class IncidentForm(forms.ModelForm):
 
