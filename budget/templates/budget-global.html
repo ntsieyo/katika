@@ -3,6 +3,9 @@
 {%load static%}
 {% load spurl %}
 {%load humanize%}
+{% comment %}
+    {% load budget %}
+{% endcomment %}
 
 {% block title %}
     Cameroon Budget Project | Katika
@@ -52,8 +55,8 @@
       {% for entry in queryset%}
         <tr>
           <td><a href="/budget/prog?y={{entry.year}}">{{entry.year}}</a></td>
-          <td class="money">{{entry.ae|big_money}}</td>
-          <td class="money">{{entry.cp|big_money}}</td>
+          <td class="money">{{entry.ae}}</td>
+          <td class="money">{{entry.cp}}</td>
         </tr>
         {% endfor %}
       </tbody>

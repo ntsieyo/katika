@@ -3,6 +3,9 @@
 {%load static%}
 {% load spurl %}
 {%load humanize%}
+{% comment %}
+    {% load budget %}
+{% endcomment %}
 
 {% block title %}
     Cameroon Budget Project | Katika
@@ -75,8 +78,8 @@
           <td>{{entry.year}}</td>
           <!--td>{{entry.bf|default:""}}</td>
           <td>{{entry.bip|default:""}}</td-->
-          <td class="money">{{entry.ae|big_money}}</td>
-          <td class="money">{{entry.cp|big_money}}</td>
+          <td class="money">{{entry.ae}}</td>
+          <td class="money">{{entry.cp}}</td>
             <td>{{entry.code}}</td>
             <td title="{{entry.description_en}}">{{entry.description_fr}}</td>
         </tr>
