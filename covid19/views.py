@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from .models import CovidProducer, CovidInitiative, CovidProducerForm, CovidInitiativeForm, \
-    CovidFund, CovidFundForm
+from .models import CovidProducer, CovidInitiative,CovidFund
+from covid19.forms import CovidFundForm, CovidInitiativeForm, CovidProducerForm
 from django.views.generic import ListView, CreateView, UpdateView
 from django.urls import reverse
 

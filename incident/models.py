@@ -1,16 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django import forms
 from django.contrib.gis.db import models as geo_models
 
-from rest_framework import serializers
+
 from mapwidgets.widgets import GooglePointFieldWidget, GoogleStaticOverlayMapWidget
 
 from geopy.geocoders import Nominatim
 import datetime
-
-#from mezzanine.generic.fields import KeywordsField
-#from mezzanine.generic.forms import KeywordsWidget, Keyword
 
 
 from django.db.models.signals import m2m_changed
@@ -32,7 +28,11 @@ class IncidentType(models.Model):
 
     # gravity, meta-data?
     
+    # Admin Conf
     ADMIN_FIELDS = ['name', 'order_key']
+    
+    # FORM Conf
+    FORM_FIELDS = ['name', 'order_key']
 
     def __str__(self):
         return self.name
@@ -46,7 +46,8 @@ class IncidentType(models.Model):
 class Tag(models.Model):
     name = models.CharField(max_length=30, null=True)
     name_fr = models.CharField(max_length=30, null=True)
-
+    # FORM Conf
+    FORM_FIELDS = ['name', 'name_fr']
     def __str__(self):
 
         display_name = ""
@@ -120,12 +121,20 @@ class Incident(models.Model):
 
     notes = models.TextField(null=True, blank=True)
     
-    # Admin Related conf
+    # Admin conf
     ADMIN_LIST_DISPLAY = ('date', 'last_modified', 'registration_date','type', 'reported_by', 'deaths',
                     'wounded', 'missing', 'address')
     ADMIN_SEARCH_FIELDS = ('description',)
     ADMIN_LIST_FILTER = ('type', 'date')
     ADMIN_EXCLUDE = ['address']
+    
+    # FORM Conf
+    FORM_FIELDS = ('type', 'location', 'date', 'description',
+                  'tags',
+                    'source', 'source_2', 'source_3','mention_list', 'deaths', 'wounded', 'missing',
+                    'deaths_security_forces','wounded_security_forces','missing_security_forces',
+                    'deaths_perpetrator','wounded_perpetrator','missing_perpetrator',
+                  'arrested', 'location_inaccurate', 'notes')
 
     def __str__(self):
         return "{}: {}, {}".format(self.type, self.date, self.address)
@@ -293,71 +302,6 @@ def save_tag_ids(sender, **kwargs):
         #     print("no tags_string")
 
 
-
-
-
-class IncidentForm(forms.ModelForm):
-
-    #TODO reposition Cameroon by default and zoom level
-    #TODO at least 2 level down
-    # location = geo_forms.PointField(widget=geo_forms.OSMWidget(attrs={'map_width':800,
-    #                                                                   'map_height':500,
-    #                                                                   ## default_zoom not working
-    #                                                                   ## version too old?
-    #                                                                   'default_zoom': 6,
-    #                                                                   'default_lon': 13.3934,
-    #                                                                   'default_lat': 9.3226,
-    #                                                                   ## map_srid creates confusion
-    #                                                                   ## potential bug
-    #                                                                   ##'map_srid': 4326
-    #                                                                   }))
-
-    date = forms.DateField(
-        widget=forms.TextInput(
-            attrs={'type': 'date'}
-        )
-    )
-
-    class Meta:
-        model = Incident
-        fields = ('type', 'location', 'date', 'description',
-                  'tags',
-                    'source', 'source_2', 'source_3','mention_list', 'deaths', 'wounded', 'missing',
-                    'deaths_security_forces','wounded_security_forces','missing_security_forces',
-                    'deaths_perpetrator','wounded_perpetrator','missing_perpetrator',
-                  'arrested', 'location_inaccurate', 'notes')
-
-        widgets = {
-            'location': GooglePointFieldWidget,
-            'description': forms.Textarea(attrs={'rows': 8}),
-            'notes': forms.Textarea(attrs={'rows': 3}),
-            'tags': forms.SelectMultiple(attrs={'size': 8})
-        }
-
-
-class IncidentTypeSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = IncidentType
-        fields = '__all__'
-
-
-class TagSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Tag
-        fields = '__all__'
-
-
-class IncidentSerializer(serializers.ModelSerializer):
-
-    type = IncidentTypeSerializer()
-    #tags = serializers.StringRelatedField(many=True)
-    tags = TagSerializer(many=True)
-
-    class Meta:
-
-        model = Incident
-        fields = '__all__'
 
 """
 from django.db.models import Sum, Count

@@ -4,15 +4,16 @@ from django.shortcuts import render
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 # Create your views here.
-from .models import ArmpEntry, TenderOwner, ArmpContract, Entreprise, WBContract, WBProject,\
-    TenderSerializer, TenderOwnerSerializer, EntrepriseSerializer
+from .models import ArmpEntry, TenderOwner, ArmpContract, Entreprise, WBContract, WBProject
+
+from tender.serializers import TenderSerializer, TenderOwnerSerializer, EntrepriseSerializer
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.db.models import F, Count, Sum, Q
 from django.db.models.functions import ExtractYear
 from django.contrib.postgres.search import SearchVector, SearchQuery
 from django.core.paginator import Paginator
-from rest_framework import viewsets, serializers
+from rest_framework import viewsets
 from katika.models import ReadOnlyOrAdmin
 
 import logging

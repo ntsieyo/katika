@@ -29,6 +29,10 @@ class Scholar(Person):
     # Admin Conf
     ADMIN_LIST_DISPLAY = ('last_name', 'first_name', 'sex')
     ADMIN_SEARCH_FIELDS = ('last_name', 'first_name')
+    
+    # FORM Conf
+    FORM_EXCLUDE_FIELDS = ['featured_image', 'slug', 'reported_by']
+    SERIALIZER_EXCLUDE_FIELDS = ['id']
 
     def save(self, *args, **kwargs):
 
@@ -46,14 +50,6 @@ class Scholar(Person):
 
     class Meta:
         abstract = False
-
-
-class ScholarSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Scholar
-        exclude = ('id',)
-
-
 
 
 
@@ -78,11 +74,6 @@ class Degree(models.Model):
             return self.name_fr
 
 
-class DegreeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Degree
-        fields = '__all__'
-
 
 
 class University(models.Model):
@@ -95,18 +86,14 @@ class University(models.Model):
     featured_image = FileField(verbose_name=_("Featured Image"),
                                upload_to=upload_to("kthesis.featured_image", "kthesis"),
                                format="Image", max_length=255, null=True, blank=True)
+    
+    SERIALIZER_FIELDS = ['name', 'name_fr', 'city', 'country', 'address', 'featured_image']
 
     def __str__(self):
         return self.name
 
     class Meta:
         verbose_name_plural = 'Universities'
-
-
-class UniversitySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = University
-        fields = '__all__'
 
 
 
@@ -160,6 +147,10 @@ class Thesis(models.Model):
     ADMIN_LIST_FILTER = ('university', 'year')
     ADMIN_FILTER_HORIZONTAL = ('supervisors', 'committee')
     ADMIN_RAW_ID_FIELDS = ('author',)
+    
+    # FORM Conf
+    FORM_EXCLUDE_FIELDS = ['slug', 'reported_by']
+    SERIALIZER_EXCLUDE_FIELDS = ['id']
 
     def save(self, *args, **kwargs):
 
@@ -197,30 +188,6 @@ class Thesis(models.Model):
         ordering = ['-year']
 
 
-class ScholarForm(forms.ModelForm):
-
-    class Meta:
-        model = Scholar
-        exclude = ('featured_image', 'slug', 'reported_by', )
-
-
-class ThesisForm(forms.ModelForm):
-
-    class Meta:
-        model = Thesis
-        exclude = ('slug', 'reported_by', )
-        labels = {
-            'title' : 'Title (in English)',
-            'title_fr': 'Titre (en Français)',
-            'year': 'Year (Année de soutenance)',
-            'abstract_fr': 'Résumé',
-            'keywords_fr': 'Mots clés',
-        }
-        widgets = {
-            'title': forms.Textarea(attrs={'rows':1}),
-            'title_fr': forms.Textarea(attrs={'rows': 1}),
-        }
-
 
 def unique_slug_max_length(queryset, slug_field, slug, max_length):
     """
@@ -250,23 +217,5 @@ def unique_slug_max_length(queryset, slug_field, slug, max_length):
 
     return result_slug
 
-
-class ThesisSerializer(serializers.ModelSerializer):
-    author = ScholarSerializer(read_only=True)
-    degree = DegreeSerializer(read_only=True)
-    supervisors = ScholarSerializer(many=True, read_only=True)
-    committee = ScholarSerializer(many=True, read_only=True)
-    university = UniversitySerializer(read_only=True)
-
-    # tracks = serializers.HyperlinkedRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     view_name='track-detail'
-    # )
-
-    class Meta:
-        model = Thesis
-        #fields = '__all__'
-        exclude = ('id',)
 
 #tagulous.admin.register(Thesis)

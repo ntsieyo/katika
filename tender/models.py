@@ -22,18 +22,15 @@ class TenderOwner(models.Model):
     ADMIN_SEARCH_FIELDS = ('owner_id', 'short_name', 'full_name')
     ADMIN_LIST_FILTER = ()
     
-
+    SERIALIZER_EXCLUDE_FIELDS = ('id',)
+    
+    
     class Meta:
         ordering = ["owner_id"]
 
     def __str__(self):
         return "{}, {}".format(self.owner_id, self.short_name)
 
-
-class TenderOwnerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TenderOwner
-        exclude = ('id',)
 
 
 class ArmpEntry(models.Model):
@@ -66,6 +63,10 @@ class ArmpEntry(models.Model):
     ADMIN_LIST_DISPLAY = ('owner', 'publication_datetime', 'cost', 'publication_type', 'title', 'link')
     ADMIN_SEARCH_FIELDS = ('title', 'content')
     ADMIN_LIST_FILTER = ('owner', 'publication_datetime', 'publication_type')
+    
+    SERIALIZER_FIELDS = ('title', 'link', 'publication_type', 'publication_datetime',
+                  'expiration_date', 'expiration_time', 'dao_link', 'region',
+                  'cost', 'owner',)
 
     class Meta:
         # TODO this works????
@@ -103,26 +104,6 @@ class ArmpEntry(models.Model):
 
 
 
-class TenderSerializer(serializers.ModelSerializer):
-
-    #type = IncidentTypeSerializer()
-    #tags = serializers.StringRelatedField(many=True)
-    #tags = TagSerializer(many=True)
-    #content = serializers.CharField(max_length=1000) couldn't figure out Textfield->Charfield
-    owner = TenderOwnerSerializer()
-
-    class Meta:
-
-        model = ArmpEntry
-        fields = ('title', 'link', 'publication_type', 'publication_datetime',
-                  'expiration_date', 'expiration_time', 'dao_link', 'region',
-                  'cost', 'owner',)
-
-
-
-
-
-
 # class AddressBP(models.Model):
 #     bp = models.PositiveIntegerField(verbose_name='Boite Postale')
 #     ville = models.CharField(max_length=50)
@@ -145,6 +126,8 @@ class CDI_CRI(models.Model):
     ADMIN_LIST_DISPLAY = ("cdi", "cri", "matches")
     ADMIN_SEARCH_FIELDS = ("cri",)
     ADMIN_LIST_FILTER = ("matches",)
+    
+    SERIALIZER_EXCLUDE_FIELDS = ('id','matches')
 
     def __str__(self):
         return f"{self.cri}-{self.cdi}"
@@ -153,15 +136,6 @@ class CDI_CRI(models.Model):
     class Meta:
         unique_together = ("cdi", "cri")
         verbose_name_plural = "CDIs"
-
-
-
-
-
-class CDI_CRI_Serializer(serializers.ModelSerializer):
-    class Meta:
-        model = CDI_CRI
-        exclude = ('id','matches')
 
 
 class Exercice(models.Model):
@@ -230,9 +204,6 @@ class Exercice(models.Model):
         ordering = ["-year", "-month"]
 
 
-
-
-
 class EntrepriseChange(models.Model):
 
     exercice = models.ForeignKey(Exercice, null=True, blank=True, on_delete=models.SET_NULL)
@@ -266,9 +237,6 @@ class EntrepriseChange(models.Model):
             #    print(f"{self.pk}, {self.search_vector}")
             # print(f"{self.pk}, {self.search_vector}")
             self.save(update_fields=['search_vector'])
-
-
-
 
 
 class Entreprise(models.Model):
@@ -384,6 +352,11 @@ class Entreprise(models.Model):
     ADMIN_SEARCH_FIELDS = ('raison_sociale', 'sigle', 'niu', 'telephone')
     ADMIN_LIST_FILTER = ('regime', 'forme_juridique', 'ville', 'departement', 'region', 'etat_niu')
 
+    SERIALIZER_FIELDS = ["niu", "raison_sociale", "sigle", "activite_principale", "bp",
+                  "telephone", "etat_niu", "forme_juridique", "lieu_dit", "regime",
+                  "regime_sub", "region", "departement", "ville", "commune", "quartier",
+                  "cdi_cri"]
+    
     def __str__(self):
 
         field_values = []
@@ -417,20 +390,6 @@ class Entreprise(models.Model):
 
     class Meta:
         ordering = ["sigle", "raison_sociale"]
-
-
-
-class EntrepriseSerializer(serializers.ModelSerializer):
-
-    #owner = TenderOwnerSerializer()
-    cdi_cri = CDI_CRI_Serializer()
-
-    class Meta:
-        model = Entreprise
-        fields = ["niu", "raison_sociale", "sigle", "activite_principale", "bp",
-                  "telephone", "etat_niu", "forme_juridique", "lieu_dit", "regime",
-                  "regime_sub", "region", "departement", "ville", "commune", "quartier",
-                  "cdi_cri"]
 
 
 class ContribuableMixin(models.Model):
@@ -606,8 +565,6 @@ class WBProject(models.Model):
             self.save(update_fields=['search_vector'])
 
 
-
-
 class WBSupplier(models.Model):
     # Listing sup
 
@@ -644,9 +601,6 @@ class WBSupplier(models.Model):
             #instance = self._meta.default_manager.with_documents().get(pk=self.pk)
             self.search_vector = SearchVector('name', config='french_unaccent')
             self.save(update_fields=['search_vector'])
-
-
-
 
 
 class WBContract(ContribuableMixin):

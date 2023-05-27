@@ -84,6 +84,11 @@ class BudgetProgramme(models.Model):
     ADMIN_LIST_DISPLAY = ('chapitre', 'year', 'code', 'pg_id', 'ae', 'cp')
     ADMIN_SEARCH_FIELDS = ('chapitre', 'description_fr', 'objective_fr', 'indicator_fr')
     ADMIN_LIST_FILTER = ('chapitre', 'year', 'code')
+    
+    # Forms conf
+    FORM_FIELDS = ('year', 'chapitre', 'ae', 'cp', 'code',
+                  'description_fr', 'description_en',
+                  'objective_fr', 'objective_en', 'indicator_fr', 'indicator_en')
 
     class Meta:
 
@@ -91,20 +96,3 @@ class BudgetProgramme(models.Model):
 
 
 
-class BudgetProgrammeForm(forms.ModelForm):
-
-    class Meta:
-        model = BudgetProgramme
-        fields = ('year', 'chapitre', 'ae', 'cp', 'code',
-                  'description_fr', 'description_en',
-                  'objective_fr', 'objective_en', 'indicator_fr', 'indicator_en')
-
-        widgets = {
-            'description_fr': forms.Textarea(attrs={'rows': 3}),
-            'description_en': forms.Textarea(attrs={'rows': 3}),
-            'objective_fr': forms.Textarea(attrs={'rows': 3}),
-            'objective_en': forms.Textarea(attrs={'rows': 3}),
-            'indicator_fr': forms.Textarea(attrs={'rows': 3}),
-            'indicator_en': forms.Textarea(attrs={'rows': 3}),
-
-        }

@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.response import Response
-from .models import EventSerializer, Event, PersonnageSerializer, Personnage \
-    , EventForm, PersonnageForm
+from .models import Event, Personnage 
+from khistory.forms import EventForm, PersonnageForm
+from khistory.serializers import EventSerializer, PersonnageSerializer
 from django.http import HttpResponseRedirect
 from rest_framework.pagination import PageNumberPagination
 from django.contrib.auth.decorators import login_required, permission_required

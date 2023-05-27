@@ -1,6 +1,4 @@
-from django import forms
 from django.db import models
-from rest_framework import serializers
 from person.models import Person
 from mezzanine.core.fields import RichTextField
 from mezzanine.utils.models import upload_to
@@ -12,9 +10,6 @@ from django.utils.text import slugify
 
 from kthesis.models import unique_slug_max_length
 
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, Div, ButtonHolder, Submit
-
 import uuid
 
 
@@ -24,14 +19,15 @@ import uuid
 class Personnage(Person):
 
     #id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    
+    # FORM Conf
+    FORM_FIELDS = '__all__'
+    FORM_EXCLUDE = ('featured_image',)
 
     class Meta:
         abstract = False
 
-class PersonnageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Personnage
-        fields = '__all__'
+
 
 
 
@@ -65,6 +61,8 @@ class Event(models.Model):
     reported_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
     tags = KeywordsField()
 
+    FORM_FIELDS = '__all_'
+    FORM_EXCLUDE = ('personnage', 'featured_image', 'tags', 'reported_by', 'slug')
 
 
     def save(self, *args, **kwargs):
@@ -84,86 +82,3 @@ class Event(models.Model):
     class Meta:
         verbose_name_plural = 'History events'  # ?
         ordering = ['-date']
-
-
-class EventSerializer(serializers.ModelSerializer):
-
-    personnages = PersonnageSerializer(many=True, read_only=True)
-
-    # def to_representation(self, instance):
-    #     """Convert `username` to lowercase."""
-    #     ret = super().to_representation(instance)
-    #
-    #     if ret['featured_image']:
-    #         print("featured_image: {}".format(ret))
-    #         ret['image_url'] = ret['featured_image']
-    #     return ret
-
-    class Meta:
-        model = Event
-        fields = '__all__'
-
-
-class EventForm(forms.ModelForm):
-
-    def __init__(self, *args, **kwargs):
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            Fieldset(
-                'History event',
-                Div('date', 'importance'),
-                'title',
-                'content',
-                Div('image_url', 'image_credits', 'image_caption'),
-                'source'
-            ),
-            ButtonHolder(
-                Submit('submit', 'Submit', css_class='button white')
-            )
-        )
-        super(EventForm, self).__init__(*args, **kwargs)
-
-    date = forms.DateField(
-        widget=forms.TextInput(
-            attrs={'type': 'date'}
-        )
-    )
-
-    class Meta:
-        model = Event
-        exclude = ('personnage', 'featured_image', 'tags', 'reported_by', 'slug')
-
-
-# class EventAdmin(admin.ModelAdmin):
-#     class Meta:
-#         form = EventForm
-
-#admin.site.register(Event, EventAdmin)
-
-
-class PersonnageForm(forms.ModelForm):
-
-    birthday = forms.DateField(
-        widget=forms.TextInput(
-            attrs={'type': 'date'}
-        )
-    )
-
-    # formfield_overrides = {
-    #     'featured_image': {'widget': forms.ClearableFileInput},
-    # }
-    # featured_image = forms.ImageField(
-    #     required=False,
-    #     widget=forms.ClearableFileInput(
-    #         attrs={
-    #             'accept': ','.join(settings.ALLOWED_IMAGE_TYPES),
-    #             'clear_checkbox_label': 'Remove custom cover'}
-    #     ),
-    # )
-    # featured_image = forms.ImageField(required=False,
-    #                                   error_messages={'invalid': _("Image files only")},
-    #                  widget=forms.FileInput)
-
-    class Meta:
-        model = Personnage
-        exclude = ('featured_image',)

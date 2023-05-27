@@ -70,16 +70,16 @@ class CovidProducer(models.Model):
     website = models.URLField(blank=True)
     address = models.CharField(max_length=255, blank=True)
     
+    # Admin Conf
     ADMIN_LIST_DISPLAY = ('id', 'type', 'contact_person', 'price', 'phone')
     ADMIN_SEARCH_FIELDS = ('contact', 'phone', 'description', 'address')
     ADMIN_LIST_FILTER = ('type', )
+    
+    # FORM Conf
+    FORM_FIELDS = ['type', 'region', 'price', 'phone', 'contact_person', 'description', 'description', 'website', 'address']
+    
 
 
-class CovidProducerForm(forms.ModelForm):
-
-    class Meta:
-        model = CovidProducer
-        fields = ['type', 'region', 'price', 'phone', 'contact_person', 'description', 'description', 'website', 'address']
 
 
 class CovidInitiative(models.Model):
@@ -90,14 +90,14 @@ class CovidInitiative(models.Model):
     description = models.TextField(blank=True)
     location_text = models.CharField(max_length=255, blank=True, null=True)
     
+    # Admin Conf
     ADMIN_LIST_DISPLAY = ('id', 'initiator', 'date')
+    
+    #FORM Conf
+    FORM_FIELDS = ['initiator', 'website', 'date', 'location_text', 'description']
 
 
-class CovidInitiativeForm(forms.ModelForm):
 
-    class Meta:
-        model = CovidInitiative
-        fields = ['initiator', 'website', 'date', 'location_text', 'description']
 
 
 class CovidFund(models.Model):
@@ -111,11 +111,8 @@ class CovidFund(models.Model):
     description = models.TextField(blank=True)
     target = models.PositiveIntegerField(blank=True, null=True)
     
+    # Admin Conf
     ADMIN_LIST_DISPLAY = ('id', 'initiator', 'start_date')
-
-
-class CovidFundForm(forms.ModelForm):
-
-    class Meta:
-        model = CovidFund
-        fields = ['name', 'initiator', 'contact', 'website', 'start_date', 'end_date', 'description', 'target']
+    
+    # FORM Conf
+    FORM_FIELDS = ['name', 'initiator', 'contact', 'website', 'start_date', 'end_date', 'description', 'target']

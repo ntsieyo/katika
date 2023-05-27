@@ -1,8 +1,10 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework import viewsets
 from django.http import HttpResponseRedirect
-from .models import ThesisSerializer, Thesis, ScholarSerializer, Scholar,\
-    University, UniversitySerializer, ScholarForm, ThesisForm
+from .models import Thesis, Scholar, University
+
+from kthesis.serializers import ThesisSerializer, ScholarSerializer, UniversitySerializer
+from kthesis.forms import ScholarForm, ThesisForm
 from django.db.models import Q, Count
 from django.contrib.auth.decorators import login_required
 

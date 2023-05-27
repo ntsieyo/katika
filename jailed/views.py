@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib.postgres.search import SearchVector
-from .models import Incarceration, IncarcerationTag, IncarcerationSerializer
+from .models import Incarceration, IncarcerationTag
+from jailed.serializers import IncarcerationSerializer
 from django.db.models import Count, Q, F
 from django.http import FileResponse
 import logging

@@ -10,7 +10,7 @@ from rest_framework import serializers
 # https://django-autocomplete-light.readthedocs.io/en/master/
 
 class IncarcerationTag(AbstractTag):
-    pass
+    FORM_FIELDS = ['name', 'name_fr']
 
 
 class Prison(models.Model):
@@ -20,6 +20,9 @@ class Prison(models.Model):
     
     # Admin conf
     ADMIN_FIELDS = ["name", "short_name", "location"]
+    
+    # FORM Conf
+    FORM_FIELDS = ["name", "short_name"]
 
     def __str__(self):
         return self.short_name if self.short_name else self.name
@@ -57,6 +60,11 @@ class Incarceration(Person):
     # Admin Conf
     ADMIN_LIST_DISPLAY = ('last_name', 'first_name', 'prison', 'birthday', 'arrest_date', 'incarceration_date', 'conviction_date', 'release_date')
     ADMIN_SEARCH_FIELDS = ('first_name', 'last_name', 'name_mispelling', 'alias', 'sources')
+    
+    # FORM Conf
+    FORM_FIELDS = ["first_name", "last_name", "alias", "birthday", "arrest_date", "incarceration_date",
+                  "prison", "tags", "conviction_date", "conviction_duration_years", "conviction_duration_months",
+                  "conviction_duration_days", "release_date", "deceased", "sources"]
     
     def more_info(self):
 
@@ -100,26 +108,4 @@ class Incarceration(Person):
 
 
 
-class IncarcerationTagSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = IncarcerationTag
-        fields = ('name', 'name_fr')
 
-
-class PrisonSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Prison
-        fields = ("name", "short_name")
-
-
-class IncarcerationSerializer(serializers.ModelSerializer):
-
-    tags = IncarcerationTagSerializer(many=True)
-    prison = PrisonSerializer()
-
-    class Meta:
-
-        model = Incarceration
-        fields = ("first_name", "last_name", "alias", "birthday", "arrest_date", "incarceration_date",
-                  "prison", "tags", "conviction_date", "conviction_duration_years", "conviction_duration_months",
-                  "conviction_duration_days", "release_date", "deceased", "sources",)

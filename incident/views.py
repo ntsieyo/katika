@@ -13,9 +13,10 @@ from django.contrib.postgres.search import SearchVector
 from rest_framework import viewsets
 
 
-from .models import IncidentType, Incident, IncidentSerializer, \
-    IncidentTypeSerializer, IncidentForm, Tag
+from .models import IncidentType, Incident, Tag
 
+from incident.forms import IncidentForm
+from incident.serializers import IncidentSerializer, IncidentTypeSerializer
 from katika.models import ReadOnlyOrAdmin
 
 from django.db.models import Q

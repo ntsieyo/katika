@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 import json
-from budget.models import AnnualEntry, BudgetProgramme, BudgetProgrammeForm, Chapitre
+from budget.forms import BudgetProgrammeForm
+from budget.models import AnnualEntry, BudgetProgramme, Chapitre
 from django.db.models import Sum, Case, When, BigIntegerField, Q
 from django.contrib.auth.decorators import login_required, permission_required
 
