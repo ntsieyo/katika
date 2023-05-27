@@ -6,75 +6,71 @@ from tender.models import CDI_CRI, ArmpContract, ArmpEntry, Entreprise, Entrepri
 
 class TenderOwnerAdmin(admin.ModelAdmin):
 
-    list_display = ('owner_id', 'short_name', 'full_name')
-    search_fields = ('owner_id', 'short_name', 'full_name')
+    list_display = TenderOwner.ADMIN_LIST_DISPLAY
+    search_fields = TenderOwner.ADMIN_SEARCH_FIELDS
 
 
 
 
 class ArmpEntryAdmin(admin.ModelAdmin):
 
-    list_display = ('owner', 'publication_datetime', 'cost', 'publication_type', 'title', 'link')
-    search_fields = ('title', 'content')
-    #search_fields = ('search_vector',)
-    list_filter = ('owner', 'publication_datetime', 'publication_type')
-    #filter_horizontal = ('supervisors', 'committee')
-    #raw_id_fields = ('author',)
+    list_display = ArmpEntry.ADMIN_LIST_DISPLAY
+    search_fields = ArmpEntry.ADMIN_SEARCH_FIELDS
+    list_filter = ArmpEntry.ADMIN_LIST_FILTER
 
 
 class CDI_CRIAdmin(admin.ModelAdmin):
-    list_display = ("cdi", "cri", "matches")
-    list_filter = ("cri",)
-    search_fields = ("matches",)
+    list_display = CDI_CRI.ADMIN_LIST_DISPLAY
+    search_fields = CDI_CRI.ADMIN_SEARCH_FIELDS
+    list_filter = CDI_CRI.ADMIN_LIST_FILTER
 
 
 
 class ExerciceAdmin(admin.ModelAdmin):
 
-    list_display = ('year', 'month')
-    search_fields = ('year', 'month')
-    list_filter = ('year', 'month')
+    list_display = Exercice.ADMIN_LIST_DISPLAY
+    search_fields = Exercice.ADMIN_SEARCH_FIELDS
+    list_filter = Exercice.ADMIN_LIST_FILTER
 
 
 
 
 class EntrepriseAdmin(admin.ModelAdmin):
 
-    list_display = ('niu', 'raison_sociale','sigle', 'regime', 'forme_juridique', 'ville', 'telephone')
-    search_fields = ('raison_sociale', 'sigle', 'niu', 'telephone')
-    list_filter = ('regime', 'forme_juridique', 'ville', 'departement', 'region', 'etat_niu')
+    list_display = Entreprise.ADMIN_LIST_DISPLAY
+    search_fields = Entreprise.ADMIN_SEARCH_FIELDS
+    list_filter = Entreprise.ADMIN_LIST_FILTER
 
 
 class ArmpContractAdmin(admin.ModelAdmin):
 
-    list_display = ('maitre_ouvrage', 'status','reference', 'title', 'date', 'year', 'cost', 'titulaire')
-    search_fields = ('title', 'maitre_ouvrage', 'titulaire', 'reference')
-    list_filter = ('status', 'maitre_ouvrage', 'year')
+    list_display = ArmpContract.ADMIN_LIST_DISPLAY
+    search_fields = ArmpContract.ADMIN_SEARCH_FIELDS
+    list_filter = ArmpContract.ADMIN_LIST_FILTER
 
 
 class WBProjectAdmin(admin.ModelAdmin):
 
-    list_display = ('project_id', 'start_date', 'cost', 'name')
-    search_fields = ('project_id', 'name', 'abstract', 'search_vector')
-    list_filter = ('financial_type', 'status', 'agency')
-    #exclude = ['search_vector']
+    list_display = WBProject.ADMIN_LIST_DISPLAY
+    search_fields = WBProject.ADMIN_SEARCH_FIELDS
+    list_filter = WBProject.ADMIN_LIST_FILTER
 
 
 
 class WBSupplierAdmin(admin.ModelAdmin):
 
-    list_display = ('supplier_id', 'name')
-    search_fields = ('supplier_id', 'name', 'search_vector')
-    exclude = ['search_vector']
+    list_display = WBSupplier.ADMIN_LIST_DISPLAY
+    search_fields = WBSupplier.ADMIN_SEARCH_FIELDS
+    exclude = WBSupplier.ADMIN_LIST_EXCLUDE
 
 
 
 
 class WBContractAdmin(admin.ModelAdmin):
 
-    list_display = ('date', 'get_project_id', 'cost', 'description')
-    list_filter = ('project__project_id',)
-    search_fields = ('search_vector',)
+    list_display = WBContract.ADMIN_LIST_DISPLAY
+    search_fields = WBContract.ADMIN_SEARCH_FIELDS
+    list_filter = WBContract.ADMIN_LIST_FILTER
 
 
 

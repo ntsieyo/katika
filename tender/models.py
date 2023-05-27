@@ -17,6 +17,11 @@ class TenderOwner(models.Model):
     #ARMP keeps changing short_name so in order not to miss entries, they can be collected first
     #then re-assigned later
     owner_id = models.IntegerField(blank=True, null=True)
+    
+    ADMIN_LIST_DISPLAY = ('owner_id', 'short_name', 'full_name')
+    ADMIN_SEARCH_FIELDS = ('owner_id', 'short_name', 'full_name')
+    ADMIN_LIST_FILTER = ()
+    
 
     class Meta:
         ordering = ["owner_id"]
@@ -57,6 +62,10 @@ class ArmpEntry(models.Model):
     own_id = models.CharField(max_length=50, blank=True, null=True)
 
     search_vector = SearchVectorField(null=True, blank=True)
+    
+    ADMIN_LIST_DISPLAY = ('owner', 'publication_datetime', 'cost', 'publication_type', 'title', 'link')
+    ADMIN_SEARCH_FIELDS = ('title', 'content')
+    ADMIN_LIST_FILTER = ('owner', 'publication_datetime', 'publication_type')
 
     class Meta:
         # TODO this works????
@@ -132,9 +141,14 @@ class CDI_CRI(models.Model):
     cdi = models.CharField(max_length=50, verbose_name='Centre des Impôts de Rattachement')
 
     matches = models.CharField(max_length=255)
+    
+    ADMIN_LIST_DISPLAY = ("cdi", "cri", "matches")
+    ADMIN_SEARCH_FIELDS = ("cri",)
+    ADMIN_LIST_FILTER = ("matches",)
 
     def __str__(self):
         return f"{self.cri}-{self.cdi}"
+    
 
     class Meta:
         unique_together = ("cdi", "cri")
@@ -188,6 +202,10 @@ class Exercice(models.Model):
 
     #https://fiscalis.dgi.cm/UploadedFiles/AttachedFiles/ArchiveListecontribuable/FICHIER%20SEPTEMBRE%202015.xlsx
     url = models.URLField(blank=True)
+    
+    ADMIN_LIST_DISPLAY = ('year', 'month')
+    ADMIN_SEARCH_FIELDS = ('year', 'month')
+    ADMIN_LIST_FILTER = ('year', 'month')
 
     @staticmethod
     def build_contribuable_url(m,y):
@@ -222,6 +240,8 @@ class EntrepriseChange(models.Model):
     log = models.CharField(max_length=255)
 
     search_vector = SearchVectorField(null=True, blank=True)
+    
+    
 
     class Meta:
         unique_together = ('log', 'exercice', 'niu')
@@ -359,6 +379,10 @@ class Entreprise(models.Model):
 
     change_list = models.ManyToManyField(EntrepriseChange, blank=True)
     exercice_list = models.ManyToManyField(Exercice, blank=True)
+    
+    ADMIN_LIST_DISPLAY = ('niu', 'raison_sociale','sigle', 'regime', 'forme_juridique', 'ville', 'telephone')
+    ADMIN_SEARCH_FIELDS = ('raison_sociale', 'sigle', 'niu', 'telephone')
+    ADMIN_LIST_FILTER = ('regime', 'forme_juridique', 'ville', 'departement', 'region', 'etat_niu')
 
     def __str__(self):
 
@@ -458,6 +482,10 @@ class ArmpContract(ContribuableMixin):
     search_vector = SearchVectorField(null=True, blank=True)
 
     s_unique = models.CharField(blank=True, max_length=1000)
+    
+    ADMIN_LIST_DISPLAY = ('maitre_ouvrage', 'status','reference', 'title', 'date', 'year', 'cost', 'titulaire')
+    ADMIN_SEARCH_FIELDS = ('title', 'maitre_ouvrage', 'titulaire', 'reference')
+    ADMIN_LIST_FILTER = ('status', 'maitre_ouvrage', 'year')
 
     class Meta:
         # 2022, check LE VICOMTE SARL
@@ -550,6 +578,10 @@ class WBProject(models.Model):
     lendinginstr = models.CharField(max_length=255, blank=True, null=True)
 
     search_vector = SearchVectorField(null=True, blank=True)
+    
+    ADMIN_LIST_DISPLAY = ('project_id', 'start_date', 'cost', 'name')
+    ADMIN_SEARCH_FIELDS = ('project_id', 'name', 'abstract', 'search_vector')
+    ADMIN_LIST_FILTER = ('financial_type', 'status', 'agency')
 
     class Meta:
 
@@ -585,6 +617,11 @@ class WBSupplier(models.Model):
     country = models.CharField(max_length=5, blank=True, null=True)
 
     search_vector = SearchVectorField(null=True, blank=True)
+    
+    ADMIN_LIST_DISPLAY = ('supplier_id', 'name')
+    ADMIN_SEARCH_FIELDS = ('supplier_id', 'name', 'search_vector')
+    ADMIN_LIST_FILTER = ()
+    ADMIN_LIST_EXCLUDE = ['search_vector']
 
     class Meta:
 
@@ -630,6 +667,10 @@ class WBContract(ContribuableMixin):
     is_scanned = models.BooleanField(default=False)
 
     search_vector = SearchVectorField(null=True, blank=True)
+    
+    ADMIN_LIST_DISPLAY = ('date', 'get_project_id', 'cost', 'description')
+    ADMIN_SEARCH_FIELDS = ('search_vector',)
+    ADMIN_LIST_FILTER = ('project__project_id',)
 
     class Meta:
 
