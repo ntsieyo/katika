@@ -25,6 +25,10 @@ class Scholar(Person):
 
     slug = models.SlugField(blank=True, null=True)
     reported_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
+    
+    # Admin Conf
+    ADMIN_LIST_DISPLAY = ('last_name', 'first_name', 'sex')
+    ADMIN_SEARCH_FIELDS = ('last_name', 'first_name')
 
     def save(self, *args, **kwargs):
 
@@ -50,12 +54,7 @@ class ScholarSerializer(serializers.ModelSerializer):
         exclude = ('id',)
 
 
-class ScholarAdmin(admin.ModelAdmin):
-    list_display = ('last_name', 'first_name', 'sex')
-    search_fields = ('last_name', 'first_name')
 
-
-admin.site.register(Scholar, ScholarAdmin)
 
 
 class Degree(models.Model):
@@ -85,8 +84,6 @@ class DegreeSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-admin.site.register(Degree)
-
 
 class University(models.Model):
     name = models.CharField(max_length=255)
@@ -112,8 +109,6 @@ class UniversitySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-admin.site.register(University)
-
 
 class KeywordEn(models.Model):
 
@@ -138,10 +133,6 @@ class KeywordFr(models.Model):
         ordering = ['name']
 
 
-admin.site.register(KeywordEn)
-admin.site.register(KeywordFr)
-
-
 class Thesis(models.Model):
     title = models.TextField(blank=True, null=True)
     title_fr = models.TextField(blank=True, null=True)
@@ -162,6 +153,13 @@ class Thesis(models.Model):
     keywords_fr = models.ManyToManyField(KeywordFr, blank=True)
 
     reported_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
+    
+    # Admin Conf
+    ADMIN_LIST_DISPLAY = ('id', 'title', 'author', 'year', 'university')
+    ADMIN_SEARCH_FIELDS = ('title', 'author')
+    ADMIN_LIST_FILTER = ('university', 'year')
+    ADMIN_FILTER_HORIZONTAL = ('supervisors', 'committee')
+    ADMIN_RAW_ID_FIELDS = ('author',)
 
     def save(self, *args, **kwargs):
 
@@ -271,14 +269,4 @@ class ThesisSerializer(serializers.ModelSerializer):
         #fields = '__all__'
         exclude = ('id',)
 
-
-class ThesisAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'author', 'year', 'university')
-    search_fields = ('title', 'author')
-    list_filter = ('university', 'year')
-    filter_horizontal = ('supervisors', 'committee')
-    raw_id_fields = ('author',)
-
-
-admin.site.register(Thesis, ThesisAdmin)
 #tagulous.admin.register(Thesis)
