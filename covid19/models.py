@@ -1,11 +1,15 @@
 from django.db import models
 from django import forms
-from django.contrib import admin
-from django.contrib.gis.db import models as geo_models
+
 
 class CovidCategory(models.Model):
 
     name = models.CharField(max_length=255)
+    
+    ADMIN_LIST_DISPLAY = ('id', 'name')
+    ADMIN_SEARCH_FIELDS = None
+    ADMIN_LIST_FILTER = None
+    ADMIN_FIELDS = ['name',]
 
     def __str__(self):
         return self.name
@@ -65,6 +69,10 @@ class CovidProducer(models.Model):
     description = models.TextField(blank=True)
     website = models.URLField(blank=True)
     address = models.CharField(max_length=255, blank=True)
+    
+    ADMIN_LIST_DISPLAY = ('id', 'type', 'contact_person', 'price', 'phone')
+    ADMIN_SEARCH_FIELDS = ('contact', 'phone', 'description', 'address')
+    ADMIN_LIST_FILTER = ('type', )
 
 
 class CovidProducerForm(forms.ModelForm):
@@ -81,6 +89,8 @@ class CovidInitiative(models.Model):
     date = models.DateField(blank=True)
     description = models.TextField(blank=True)
     location_text = models.CharField(max_length=255, blank=True, null=True)
+    
+    ADMIN_LIST_DISPLAY = ('id', 'initiator', 'date')
 
 
 class CovidInitiativeForm(forms.ModelForm):
@@ -88,29 +98,6 @@ class CovidInitiativeForm(forms.ModelForm):
     class Meta:
         model = CovidInitiative
         fields = ['initiator', 'website', 'date', 'location_text', 'description']
-
-
-class CovidProductAdmin(admin.ModelAdmin):
-
-    list_display = ('id', 'type', 'contact_person', 'price', 'phone')
-    search_fields = ('contact', 'phone', 'description', 'address')
-    list_filter = ('type', )
-    #filter_horizontal = ('supervisors', 'committee')
-    #raw_id_fields = ('author',)
-
-
-class CovidCatalogAdmin(admin.ModelAdmin):
-
-    fields = ['name',]
-
-    list_display = ('id', 'name')
-
-
-class CovidInitiativeAdmin(admin.ModelAdmin):
-
-    #fields = ['name',]
-
-    list_display = ('id', 'initiator', 'date')
 
 
 class CovidFund(models.Model):
@@ -123,6 +110,8 @@ class CovidFund(models.Model):
     end_date = models.DateField(blank=True, null=True)
     description = models.TextField(blank=True)
     target = models.PositiveIntegerField(blank=True, null=True)
+    
+    ADMIN_LIST_DISPLAY = ('id', 'initiator', 'start_date')
 
 
 class CovidFundForm(forms.ModelForm):
@@ -130,18 +119,3 @@ class CovidFundForm(forms.ModelForm):
     class Meta:
         model = CovidFund
         fields = ['name', 'initiator', 'contact', 'website', 'start_date', 'end_date', 'description', 'target']
-
-
-class CovidFundAdmin(admin.ModelAdmin):
-
-    list_display = ('id', 'initiator', 'start_date')
-
-
-admin.site.register(CovidProducer, CovidProductAdmin)
-admin.site.register(CovidCategory, CovidCatalogAdmin)
-admin.site.register(CovidInitiative, CovidInitiativeAdmin)
-admin.site.register(CovidFund, CovidFundAdmin)
-
-
-
-
