@@ -9,21 +9,15 @@ class Chapitre(models.Model):
     short_name = models.CharField(max_length=20)
     full_name_fr = models.CharField(max_length=100, blank=True, null=True)
     full_name_en = models.CharField(max_length=100, blank=True, null=True)
+    ADMIN_LIST_DISPLAY = ('number', 'short_name', 'full_name_fr', 'full_name_en')
+    ADMIN_SEARCH_FIELDS = ('short_name', 'full_name_fr', 'full_name_en')
+    ADMIN_LIST_FILTER = ('short_name',)
 
     def __str__(self):
         return self.short_name
 
 
-class ChapitreAdmin(admin.ModelAdmin):
 
-    list_display = ('number', 'short_name', 'full_name_fr', 'full_name_en')
-    search_fields = ('short_name', 'full_name_fr', 'full_name_en')
-    list_filter = ('short_name',)
-    #filter_horizontal = ('supervisors', 'committee')
-    #raw_id_fields = ('author',)
-
-
-admin.site.register(Chapitre, ChapitreAdmin)
 
 
 class AnnualEntry(models.Model):
@@ -63,19 +57,14 @@ class AnnualEntry(models.Model):
     ]
 
     region = models.CharField(max_length=3, choices=REGIONS)
+    
+    ADMIN_LIST_DISPLAY = ('chapitre', 'year', 'bf_bip', 'status', 'region', 'ae', 'cp')
+    ADMIN_SEARCH_FIELDS = ('chapitre', 'region')
+    ADMIN_LIST_FILTER = ('chapitre', 'year')
 
     class Meta:
         unique_together = ("year", "chapitre", "status", "region", 'bf_bip')
 
-
-class AnnualEntryAdmin(admin.ModelAdmin):
-
-    list_display = ('chapitre', 'year', 'bf_bip', 'status', 'region', 'ae', 'cp')
-    search_fields = ('chapitre', 'region')
-    list_filter = ('chapitre', 'year')
-
-
-admin.site.register(AnnualEntry, AnnualEntryAdmin)
 
 
 class BudgetProgramme(models.Model):
@@ -92,20 +81,15 @@ class BudgetProgramme(models.Model):
     objective_en = models.TextField(blank=True, null=True)
     indicator_fr = models.TextField(blank=True, null=True)
     indicator_en = models.TextField(blank=True, null=True)
+    
+    ADMIN_LIST_DISPLAY = ('chapitre', 'year', 'code', 'pg_id', 'ae', 'cp')
+    ADMIN_SEARCH_FIELDS = ('chapitre', 'description_fr', 'objective_fr', 'indicator_fr')
+    ADMIN_LIST_FILTER = ('chapitre', 'year', 'code')
 
     class Meta:
 
         unique_together = ("year", "chapitre", "code")
 
-
-class BudgetProgrammeAdmin(admin.ModelAdmin):
-
-    list_display = ('chapitre', 'year', 'code', 'pg_id', 'ae', 'cp')
-    search_fields = ('chapitre', 'description_fr', 'objective_fr', 'indicator_fr')
-    list_filter = ('chapitre', 'year', 'code')
-
-
-admin.site.register(BudgetProgramme, BudgetProgrammeAdmin)
 
 
 class BudgetProgrammeForm(forms.ModelForm):
