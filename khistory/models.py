@@ -1,16 +1,13 @@
 from django import forms
 from django.db import models
-from django.contrib import admin
 from rest_framework import serializers
 from person.models import Person
 from mezzanine.core.fields import RichTextField
 from mezzanine.utils.models import upload_to
 from mezzanine.core.fields import FileField
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
 from mezzanine.generic.fields import KeywordsField
-
-from mezzanine.utils.urls import unique_slug
 from django.utils.text import slugify
 
 from kthesis.models import unique_slug_max_length
@@ -37,7 +34,7 @@ class PersonnageSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-admin.site.register(Personnage)
+
 
 class Event(models.Model):
 
@@ -142,7 +139,7 @@ class EventForm(forms.ModelForm):
 #         form = EventForm
 
 #admin.site.register(Event, EventAdmin)
-admin.site.register(Event)
+
 
 class PersonnageForm(forms.ModelForm):
 
