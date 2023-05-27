@@ -1,10 +1,8 @@
 from django.db import models
 from katika.models import NullsLastQuerySet
-from django.contrib import admin
 from person.models import Person, SEX
 from django.contrib.gis.db import models as geo_models
 from katika.models import AbstractTag
-from mapwidgets.widgets import GooglePointFieldWidget
 import copy
 from rest_framework import serializers
 
@@ -19,6 +17,9 @@ class Prison(models.Model):
     name = models.CharField(max_length=255)
     short_name = models.CharField(max_length=30, blank=True, null=True)
     location = geo_models.PointField()
+    
+    # Admin conf
+    ADMIN_FIELDS = ["name", "short_name", "location"]
 
     def __str__(self):
         return self.short_name if self.short_name else self.name
@@ -27,9 +28,6 @@ class Prison(models.Model):
 # Magistrate or juge?
 class Judge(Person):
     pass
-
-
-admin.site.register(Judge)
 
 
 class Incarceration(Person):
@@ -55,6 +53,10 @@ class Incarceration(Person):
 
     #https://stackoverflow.com/questions/15121093/django-adding-nulls-last-to-query
     objects = NullsLastQuerySet.as_manager()
+    
+    # Admin Conf
+    ADMIN_LIST_DISPLAY = ('last_name', 'first_name', 'prison', 'birthday', 'arrest_date', 'incarceration_date', 'conviction_date', 'release_date')
+    ADMIN_SEARCH_FIELDS = ('first_name', 'last_name', 'name_mispelling', 'alias', 'sources')
     
     def more_info(self):
 
@@ -95,14 +97,7 @@ class Incarceration(Person):
     #    managed = True
 
 
-class IncarcerationAdmin(admin.ModelAdmin):
 
-    list_display = ('last_name', 'first_name', 'prison', 'birthday', 'arrest_date', 'incarceration_date', 'conviction_date', 'release_date')
-    search_fields = ('first_name', 'last_name', 'name_mispelling', 'alias', 'sources')
-    #list_filter = ('type', 'date')
-
-
-admin.site.register(Incarceration, IncarcerationAdmin)
 
 
 class IncarcerationTagSerializer(serializers.ModelSerializer):
@@ -128,21 +123,3 @@ class IncarcerationSerializer(serializers.ModelSerializer):
         fields = ("first_name", "last_name", "alias", "birthday", "arrest_date", "incarceration_date",
                   "prison", "tags", "conviction_date", "conviction_duration_years", "conviction_duration_months",
                   "conviction_duration_days", "release_date", "deceased", "sources",)
-
-
-class PrisonAdmin(admin.ModelAdmin):
-
-    fiels = ["name", "short_name", "location"]
-
-    formfield_overrides = {
-        geo_models.PointField: {"widget": GooglePointFieldWidget},
-        # KeywordsField: {"widget": KeywordsWidget},
-
-    }
-
-
-admin.site.register(IncarcerationTag)
-admin.site.register(Prison, PrisonAdmin)
-
-
-
